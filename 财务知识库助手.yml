@@ -1,0 +1,284 @@
+app:
+  description: ''
+  icon: 🤖
+  icon_background: '#FFEAD5'
+  icon_type: emoji
+  mode: advanced-chat
+  name: 财务知识库助手
+  use_icon_as_answer_icon: false
+dependencies:
+- current_identifier: null
+  type: marketplace
+  value:
+    marketplace_plugin_unique_identifier: langgenius/openai_api_compatible:0.0.68@ba61c5eccb814be7364117c0bec3710a51e09b20f31e37243e747a00f9377969
+    version: null
+kind: app
+version: 0.7.0
+workflow:
+  conversation_variables: []
+  environment_variables: []
+  features:
+    file_upload: {}
+    opening_statement: ''
+    retriever_resource:
+      enabled: true
+    sensitive_word_avoidance:
+      enabled: false
+    speech_to_text:
+      enabled: false
+    suggested_questions: []
+    suggested_questions_after_answer:
+      enabled: false
+    text_to_speech:
+      enabled: false
+      language: ''
+      voice: ''
+  graph:
+    edges:
+    - data:
+        isInIteration: false
+        isInLoop: false
+        iteration_id: null
+        loop_id: null
+        sourceType: start
+        targetType: question-classifier
+      id: 1792432359900-source-1792432966044-target
+      selected: false
+      source: '1792432359900'
+      sourceHandle: source
+      target: '1792432966044'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInIteration: false
+        isInLoop: false
+        iteration_id: null
+        loop_id: null
+        sourceType: question-classifier
+        targetType: http-request
+      id: 1792432966044-1-1792433112878-target
+      selected: false
+      source: '1792432966044'
+      sourceHandle: '1'
+      target: '1792433112878'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInIteration: null
+        isInLoop: false
+        iteration_id: null
+        loop_id: null
+        sourceType: question-classifier
+        targetType: answer
+      id: 1792432966044-2-answer-target
+      selected: false
+      source: '1792432966044'
+      sourceHandle: '2'
+      target: answer
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInIteration: false
+        isInLoop: false
+        iteration_id: null
+        loop_id: null
+        sourceType: http-request
+        targetType: code
+      id: 1792433112878-source-1792433680301-target
+      source: '1792433112878'
+      sourceHandle: source
+      target: '1792433680301'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInIteration: false
+        isInLoop: false
+        iteration_id: null
+        loop_id: null
+        sourceType: code
+        targetType: answer
+      id: 1792433680301-source-1792433857343-target
+      source: '1792433680301'
+      sourceHandle: source
+      target: '1792433857343'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    nodes:
+    - data:
+        selected: false
+        title: 用户输入
+        type: start
+        variables: []
+      height: 72
+      id: '1792432359900'
+      position:
+        x: 55
+        y: 57
+      positionAbsolute:
+        x: 55
+        y: 57
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 242
+      zIndex: 0
+    - data:
+        classes:
+        - id: '1'
+          label: 财务制度问题
+          name: 询问财务报销制度、住宿标准、差旅费用标准、报销流程等制度类问题
+        - id: '2'
+          label: 闲聊与无关问题
+          name: 问候、闲聊、与财务制度完全无关的话题
+        model:
+          completion_params:
+            temperature: 0.7
+          mode: chat
+          name: qwen3.6-plus
+          provider: langgenius/openai_api_compatible/openai_api_compatible
+        query_variable_selector:
+        - '1792432359900'
+        - sys.query
+        selected: false
+        title: 问题分类器
+        type: question-classifier
+        vision:
+          enabled: false
+      height: 145
+      id: '1792432966044'
+      position:
+        x: 362
+        y: -27
+      positionAbsolute:
+        x: 362
+        y: -27
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 242
+    - data:
+        authorization:
+          config: null
+          type: no-auth
+        body:
+          data:
+          - id: key-value-50
+            key: ''
+            type: text
+            value: "{\n  \"question\": {{#sys.query#}},\n  \"user_role\": \"employee\"\
+              \n}"
+          type: json
+        headers: Content-Type:application/json
+        method: post
+        params: ''
+        retry_config:
+          max_retries: 3
+          retry_enabled: false
+          retry_interval: 100
+        selected: false
+        ssl_verify: true
+        timeout:
+          max_connect_timeout: 0
+          max_read_timeout: 0
+          max_write_timeout: 0
+          read: 60
+        title: HTTP 请求
+        type: http-request
+        url: http://host.docker.internal:8000/ask
+        variables: []
+      height: 81
+      id: '1792433112878'
+      position:
+        x: 739.8314598003692
+        y: -45.11180686233744
+      positionAbsolute:
+        x: 739.8314598003692
+        y: -45.11180686233744
+      selected: true
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 242
+    - data:
+        code: "import json\n\ndef main(body: str) -> dict:\n    try:\n        data\
+          \ = json.loads(body)\n        return {\"answer\": data.get(\"answer\", \"\
+          知识库服务返回异常，请稍后重试\")}\n    except Exception:\n        return {\"answer\":\
+          \ \"知识库服务暂时不可用，请稍后重试\"}"
+        code_language: python3
+        outputs:
+          answer:
+            children: null
+            type: string
+        selected: false
+        title: 代码执行
+        type: code
+        variables:
+        - value_selector:
+          - '1792433112878'
+          - body
+          value_type: string
+          variable: body
+      height: 51
+      id: '1792433680301'
+      position:
+        x: 688
+        y: 198
+      positionAbsolute:
+        x: 688
+        y: 198
+      selected: true
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 242
+    - data:
+        answer: '{{#1792433680301.answer#}}'
+        selected: false
+        title: 直接回复 2
+        type: answer
+        variables: []
+      height: 99
+      id: '1792433857343'
+      position:
+        x: 694.4442853128119
+        y: 354.9007166597364
+      positionAbsolute:
+        x: 694.4442853128119
+        y: 354.9007166597364
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 242
+    - data:
+        answer: 我是财务制度知识助手，仅回答报销制度相关问题，例如"深圳住宿标准是多少？"
+        selected: false
+        title: 直接回复
+        type: answer
+        variables: []
+      height: 83
+      id: answer
+      position:
+        x: 321.3908716000175
+        y: 189.13225195769778
+      positionAbsolute:
+        x: 321.3908716000175
+        y: 189.13225195769778
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 242
+      zIndex: 0
+    viewport:
+      x: -73.69773322256492
+      y: 118.2435007475753
+      zoom: 0.6299605533755207
+  rag_pipeline_variables: []
